@@ -7,7 +7,7 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCYq-8EkifszyDNBvTzNfFkCWeVEKqtVJc",
+  apiKey: `${import.meta.env.VITE_API_KEY}`,
   authDomain: "task-round-assignment.firebaseapp.com",
   projectId: "task-round-assignment",
   storageBucket: "task-round-assignment.appspot.com",

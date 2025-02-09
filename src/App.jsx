@@ -6,7 +6,7 @@ function App() {
   return (
     <Router>
       <div className="container mx-auto p-4">
-        <Routes>
+        <Routes basename="/exp-tr">
           <Route path="/" element={<Home />} />
           <Route path="/project/:projectId" element={<ProjectDetails />} />
         </Routes>

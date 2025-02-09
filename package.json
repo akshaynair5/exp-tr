@@ -1,6 +1,6 @@
 {
-  "name": "expense_tracker",
-  "private": true,
+  "name": "exp_tr",
+  "private": false,
   "version": "0.0.0",
   "type": "module",
   "homepage": "https://akshaynair5.github.io/exp-tr",

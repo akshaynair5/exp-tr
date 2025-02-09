@@ -18,11 +18,11 @@ function PersonForm({ addPerson }) {
         placeholder="Enter person name"
         value={personName}
         onChange={(e) => setPersonName(e.target.value)}
-        className="bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+        className="bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-green-500 w-[75%]"
       />
       <button 
         type="submit" 
-        className="bg-green-500 hover:bg-green-600 text-white font-medium px-4 py-2 rounded-lg shadow-md transition duration-200"
+        className="bg-green-500 hover:bg-green-600 text-white font-medium px-2 py-2 rounded-lg shadow-md transition duration-200 w-[22.5%]"
       >
         Add
       </button>

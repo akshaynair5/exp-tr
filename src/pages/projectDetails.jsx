@@ -96,39 +96,62 @@ function ProjectDetails() {
     });
   };  
 
-  const addIncome = async (amount, description, date) => {
+  const addIncome = async (amount, description, date, incomeType) => {
     const incomeData = {
       amount: parseFloat(amount),
       description,
+      incomeType,
       date, // 🔹 Store the date
       timestamp: new Date(), // Keep original timestamp
     };
   
     await addDoc(collection(db, `projects/${projectId}/income`), incomeData);
   };
-
-  const handleDeleteExpense = async (id) => {
+  const updateExpense = async (id, updatedData) => {
     try {
-      // Delete from Firestore
-      try{
+      const expenseRef = doc(db, `projects/${projectId}/expenses`, id);
+      const oldExpense = expenses.find((expense) => expense.id === id);
+      if (!oldExpense) {
+        console.error("Expense not found.");
+        return;
+      }
+  
+      // 🔹 Calculate the difference in amount (handle if amount is changed)
+      const newAmount = updatedData.amount !== undefined ? parseFloat(updatedData.amount) : oldExpense.amount;
+      const amountDifference = newAmount - oldExpense.amount;
+  
+      // 🔥 Update Firestore - Update totalExpense in project if amount changes
+      if (amountDifference !== 0) {
         await updateDoc(doc(db, "projects", projectId), {
-            totalExpense: project.totalExpense - expenses.find((expense) => expense.id === id).amount,
+          totalExpense: project.totalExpense + amountDifference,
         });
-        setProject({...project, totalExpense: project.totalExpense - expenses.find((expense) => expense.id === id).amount});
-        await deleteDoc(doc(db,`projects/${projectId}/expenses`, id));
-      }
-      catch(error){
-        console.error("Error deleting expense:", error);
       }
   
-      // Update local state after successful deletion
-      setExpenses(expenses.filter(expense => expense.id !== id));
+      // 🔹 Update Firestore with new data
+      await updateDoc(expenseRef, {
+        person: updatedData.person || oldExpense.person,
+        description: updatedData.description || oldExpense.description,
+        amount: newAmount,
+        date: updatedData.date || oldExpense.date,
+      });
   
-      console.log("Expense deleted successfully!");
+      // 🔹 Update local state with updated values
+      setExpenses(expenses.map(expense =>
+        expense.id === id ? { ...expense, ...updatedData, amount: newAmount } : expense
+      ));
+  
+      // 🔥 If amount changed, update the project state
+      if (amountDifference !== 0) {
+        setProject({ ...project, totalExpense: project.totalExpense + amountDifference });
+      }
+  
+      console.log("Expense updated successfully!");
     } catch (error) {
-      console.error("Error deleting expense:", error);
+      console.error("Error updating expense:", error);
     }
   };
+  
+  
   
   
   if (!project) return <p className="text-white text-center mt-10 text-lg">Loading...</p>;
@@ -214,7 +237,7 @@ function ProjectDetails() {
             {/* 🔹 Separate Income Section */}
             <div className="mt-6 bg-gray-700 p-4 rounded-lg shadow-md">
             <h3 className="text-lg font-bold text-white mb-3">📥 Expense Money</h3>
-            <ExpenseList expenses={expenses} deleteExpense={handleDeleteExpense}/>
+            <ExpenseList expenses={expenses} updateExpense={updateExpense}/>
             </div>
 
             <div className="mt-6 bg-gray-700 p-4 rounded-lg shadow-md">
